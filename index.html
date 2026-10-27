@@ -54,7 +54,8 @@ function render(){
 document.getElementById("menu").innerHTML=foods.map(f=>
 `<div class="card"><h3>${f.name}</h3><p>₹${f.price}</p>
 <button onclick="addCart(${f.id})">Add to Cart</button>
-<button onclick="deleteFood(${f.id})">Delete</button></div>`
+<button onclick="editFood(${f.id})">Update</button>
+<button onclick="deleteFood(${f.id})">Delete</button>
 ).join("");
 renderCart();
 }
@@ -84,6 +85,29 @@ render();
 function deleteFood(id){
 foods=foods.filter(f=>f.id!==id);
 render();
+}
+  function editFood(id) {
+  let food = foods.find(f => f.id === id);
+  if (!food) return;
+
+  let name = prompt("Enter updated food name:", food.name);
+  if (name === null) return;
+
+  let price = prompt("Enter updated price:", food.price);
+  if (price === null) return;
+
+  name = name.trim();
+  price = Number(price);
+
+  if (!name || !Number.isFinite(price) || price <= 0) {
+    alert("Enter a valid name and price.");
+    return;
+  }
+
+  food.name = name;
+  food.price = price;
+  render();
+  alert("Food item updated successfully!");
 }
 function placeOrder(){
 let name=document.getElementById("customer").value.trim();
