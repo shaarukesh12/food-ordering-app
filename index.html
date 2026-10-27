@@ -3,17 +3,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Foodie - Online Food Ordering</title>
 <style>
-body{font-family:Arial;margin:0;background:#fff8f0;color:#333}
-header{background:#e94b24;color:white;text-align:center;padding:25px}
-main{max-width:900px;margin:25px auto;padding:15px}
-.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
-.card{background:white;padding:18px;border-radius:10px;box-shadow:0 2px 8px #ddd}
-button{background:#e94b24;color:white;border:0;padding:10px;border-radius:5px;cursor:pointer;margin:4px}
-input{padding:10px;margin:5px;max-width:90%}
-h2{color:#e94b24}
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;margin:0;background:#fff8f0;color:#222}
+header{background:#ed4825;color:white;text-align:center;padding:22px}
+header h1{margin:0 0 8px}
+nav{background:#292929;padding:12px;text-align:center}
+nav a{color:white;text-decoration:none;margin:0 15px}
+main{max-width:1050px;margin:25px auto;padding:15px}
+h2{color:#ed4825}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
+.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 9px #ddd}
+.card h3{margin-top:5px}
+.price{font-weight:bold}
+button{background:#ed4825;color:white;border:0;padding:10px 12px;border-radius:5px;cursor:pointer;margin:4px 2px}
+button:hover{background:#c93719}
+input{padding:11px;margin:5px 5px 5px 0;border:1px solid #aaa;border-radius:4px;max-width:100%}
+section{margin-bottom:28px}
+.status{background:#e6f5e9;padding:12px;border-radius:6px}
+footer{text-align:center;background:#292929;color:white;padding:16px}
+@media(max-width:600px){main{padding:12px}.menu{grid-template-columns:1fr}nav a{margin:0 7px}}
 </style>
 </head>
 <body>
@@ -21,111 +32,280 @@ h2{color:#e94b24}
 <h1>🍕 Foodie</h1>
 <p>Delicious food delivered to your door!</p>
 </header>
-<main>
-<h2>Our Food Menu</h2>
-<div class="menu" id="menu"></div>
 
+<nav>
+<a href="#menuSection">Food Menu</a>
+<a href="#cartSection">Your Cart</a>
+<a href="#manageSection">Manage Food</a>
+<a href="#ordersSection">Orders</a>
+</nav>
+
+<main>
+<section id="menuSection">
+<h2>Our Food Menu</h2>
+<div id="menu" class="menu"></div>
+</section>
+
+<section id="cartSection">
 <h2>Your Cart</h2>
 <div id="cart">Your cart is empty.</div>
 <p id="total">Total: ₹0</p>
 <input id="customer" placeholder="Enter your name">
 <button onclick="placeOrder()">Place Order</button>
+</section>
 
+<section id="manageSection">
 <h2>Manage Food Items</h2>
-<input id="name" placeholder="Food name">
-<input id="price" type="number" min="1" placeholder="Price">
+<p>Add a new food item or update an existing item from the menu.</p>
+<input id="foodName" placeholder="Food name">
+<input id="foodPrice" type="number" min="1" placeholder="Price (₹)">
 <button onclick="addFood()">Add Food</button>
+<button onclick="cancelEdit()" id="cancelButton" hidden>Cancel Update</button>
+<p id="message" role="status"></p>
+</section>
 
+<section id="ordersSection">
 <h2>Customer Orders</h2>
 <div id="orders">No orders yet.</div>
+</section>
 </main>
+
+<footer>© 2026 Foodie | Online Food Ordering System</footer>
+
 <script>
-let foods=[
-{id:1,name:"Veg Pizza",price:199},
-{id:2,name:"Burger",price:99},
-{id:3,name:"Masala Dosa",price:80},
-{id:4,name:"Veg Biryani",price:150},
-{id:5,name:"Sandwich",price:70},
-{id:6,name:"French Fries",price:90}
+"use strict";
+
+let nextId = 7;
+let editingId = null;
+
+let foods = [
+  {id:1,name:"Veg Pizza",price:199},
+  {id:2,name:"Burger",price:99},
+  {id:3,name:"Masala Dosa",price:80},
+  {id:4,name:"Veg Biryani",price:150},
+  {id:5,name:"Sandwich",price:70},
+  {id:6,name:"French Fries",price:90}
 ];
-let cart=[],orders=[];
 
-function render(){
-document.getElementById("menu").innerHTML=foods.map(f=>
-`<div class="card"><h3>${f.name}</h3><p>₹${f.price}</p>
-<button onclick="addCart(${f.id})">Add to Cart</button>
-<button onclick="editFood(${f.id})">Update</button>
-<button onclick="deleteFood(${f.id})">Delete</button>
-).join("");
-renderCart();
-}
-function addCart(id){
-let f=foods.find(x=>x.id===id);
-if(f)cart.push({...f});
-renderCart();
-}
-function renderCart(){
-document.getElementById("cart").innerHTML=cart.length?
-cart.map((f,i)=>`${f.name} - ₹${f.price}
-<button onclick="removeCart(${i})">Remove</button><br>`).join("")
-:"Your cart is empty.";
-document.getElementById("total").textContent=
-"Total: ₹"+cart.reduce((s,f)=>s+f.price,0);
-}
-function removeCart(i){cart.splice(i,1);renderCart();}
-function addFood(){
-let name=document.getElementById("name").value.trim();
-let price=Number(document.getElementById("price").value);
-if(!name||price<=0){alert("Enter a valid name and price.");return;}
-foods.push({id:Date.now(),name,price});
-document.getElementById("name").value="";
-document.getElementById("price").value="";
-render();
-}
-function deleteFood(id){
-foods=foods.filter(f=>f.id!==id);
-render();
-}
-  function editFood(id) {
-  let food = foods.find(f => f.id === id);
-  if (!food) return;
+let cart = [];
+let orders = [];
 
-  let name = prompt("Enter updated food name:", food.name);
-  if (name === null) return;
+function render() {
+  const menu = document.getElementById("menu");
 
-  let price = prompt("Enter updated price:", food.price);
-  if (price === null) return;
+  if (foods.length === 0) {
+    menu.innerHTML = "<p>No food items available. Add a new item below.</p>";
+  } else {
+    menu.innerHTML = foods.map(f => `
+      <div class="card">
+        <h3>${escapeHTML(f.name)}</h3>
+        <p class="price">₹${f.price}</p>
+        <button onclick="addCart(${f.id})">Add to Cart</button>
+        <button onclick="startEdit(${f.id})">Update</button>
+        <button onclick="deleteFood(${f.id})">Delete</button>
+      </div>
+    `).join("");
+  }
 
-  name = name.trim();
-  price = Number(price);
+  renderCart();
+  renderOrders();
+}
 
-  if (!name || !Number.isFinite(price) || price <= 0) {
-    alert("Enter a valid name and price.");
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+// CREATE: add a new food item or save an update
+function addFood() {
+  const name = document.getElementById("foodName").value.trim();
+  const priceText = document.getElementById("foodPrice").value.trim();
+  const price = Number(priceText);
+  const message = document.getElementById("message");
+
+  if (!name || !priceText || !Number.isFinite(price) || price <= 0) {
+    message.textContent = "Enter a valid food name and positive price.";
     return;
   }
 
-  food.name = name;
-  food.price = price;
+  if (editingId !== null) {
+    // UPDATE an existing item
+    const food = foods.find(f => f.id === editingId);
+    if (!food) {
+      message.textContent = "Food item not found.";
+      cancelEdit();
+      return;
+    }
+
+    food.name = name;
+    food.price = price;
+
+    // Update matching items already in the cart
+    cart.forEach(item => {
+      if (item.id === editingId) {
+        item.name = name;
+        item.price = price;
+      }
+    });
+
+    message.textContent = "Food item updated successfully!";
+    cancelEdit(false);
+  } else {
+    // CREATE a new item
+    foods.push({id:nextId++,name:name,price:price});
+    message.textContent = "Food item added successfully!";
+  }
+
+  document.getElementById("foodName").value = "";
+  document.getElementById("foodPrice").value = "";
   render();
-  alert("Food item updated successfully!");
 }
-function placeOrder(){
-let name=document.getElementById("customer").value.trim();
-if(!name||!cart.length){
-alert("Enter your name and add food to your cart.");return;
+
+// READ: display all food items in render()
+function startEdit(id) {
+  const food = foods.find(f => f.id === id);
+  if (!food) return;
+
+  editingId = id;
+  document.getElementById("foodName").value = food.name;
+  document.getElementById("foodPrice").value = food.price;
+
+  const button = document.querySelector("#manageSection button");
+  button.textContent = "Save Update";
+  document.getElementById("cancelButton").hidden = false;
+  document.getElementById("message").textContent =
+    "Editing " + food.name + ". Change the details and click Save Update.";
+
+  document.getElementById("manageSection").scrollIntoView({behavior:"smooth"});
+  document.getElementById("foodName").focus();
 }
-let total=cart.reduce((s,f)=>s+f.price,0);
-orders.push({name,items:cart.map(f=>f.name).join(", "),total});
-cart=[];
-renderCart();
-document.getElementById("customer").value="";
-document.getElementById("orders").innerHTML=orders.map((o,i)=>
-`<div class="card"><h3>Order ${i+1}</h3>
-<p>Customer: ${o.name}</p><p>Items: ${o.items}</p>
-<p>Total: ₹${o.total}</p><p>Status: Placed</p></div>`
-).join("");
-alert("Order placed successfully!");
+
+function cancelEdit(clearMessage = true) {
+  editingId = null;
+  document.getElementById("foodName").value = "";
+  document.getElementById("foodPrice").value = "";
+  document.querySelector("#manageSection button").textContent = "Add Food";
+  document.getElementById("cancelButton").hidden = true;
+
+  if (clearMessage) {
+    document.getElementById("message").textContent = "";
+  }
 }
+
+// DELETE: remove a food item
+function deleteFood(id) {
+  const food = foods.find(f => f.id === id);
+  if (!food) return;
+
+  if (!confirm("Delete " + food.name + " from the menu?")) return;
+
+  foods = foods.filter(f => f.id !== id);
+  cart = cart.filter(item => item.id !== id);
+
+  if (editingId === id) cancelEdit();
+
+  document.getElementById("message").textContent =
+    "Food item deleted successfully!";
+  render();
+}
+
+// SHOPPING CART
+function addCart(id) {
+  const food = foods.find(f => f.id === id);
+  if (!food) return;
+
+  cart.push({...food});
+  renderCart();
+}
+
+function removeCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function renderCart() {
+  const cartElement = document.getElementById("cart");
+
+  if (cart.length === 0) {
+    cartElement.textContent = "Your cart is empty.";
+  } else {
+    cartElement.innerHTML = cart.map((item, index) => `
+      <div>
+        ${escapeHTML(item.name)} - ₹${item.price}
+        <button onclick="removeCart(${index})">Remove</button>
+      </div>
+    `).join("");
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  document.getElementById("total").textContent = "Total: ₹" + total;
+}
+
+// PLACE CUSTOMER ORDER
+function placeOrder() {
+  const customer = document.getElementById("customer").value.trim();
+
+  if (!customer) {
+    alert("Please enter your name.");
+    return;
+  }
+
+  if (cart.length === 0) {
+    alert("Please add food items to your cart.");
+    return;
+  }
+
+  const order = {
+    id: orders.length + 1,
+    customer: customer,
+    items: cart.map(item => ({...item})),
+    total: cart.reduce((sum, item) => sum + item.price, 0),
+    status: "Placed"
+  };
+
+  orders.push(order);
+  cart = [];
+  document.getElementById("customer").value = "";
+
+  render();
+  alert("Order placed successfully!");
+}
+
+function renderOrders() {
+  const element = document.getElementById("orders");
+
+  if (orders.length === 0) {
+    element.textContent = "No orders yet.";
+    return;
+  }
+
+  element.innerHTML = orders.map(order => `
+    <div class="card" style="margin-bottom:12px">
+      <h3>Order #${order.id}</h3>
+      <p>Customer: ${escapeHTML(order.customer)}</p>
+      <p>Items: ${order.items.map(item => escapeHTML(item.name)).join(", ")}</p>
+      <p>Total: ₹${order.total}</p>
+      <p>Status: <strong>${escapeHTML(order.status)}</strong></p>
+      <button onclick="updateOrderStatus(${order.id})">Update Order Status</button>
+    </div>
+  `).join("");
+}
+
+function updateOrderStatus(id) {
+  const order = orders.find(o => o.id === id);
+  if (!order) return;
+
+  const statuses = ["Placed", "Preparing", "Delivered"];
+  const current = statuses.indexOf(order.status);
+  order.status = statuses[(current + 1) % statuses.length];
+  renderOrders();
+}
+
 render();
 </script>
 </body>
