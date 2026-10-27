@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foodie - Online Food Ordering</title>
+<style>
+body{font-family:Arial;margin:0;background:#fff8f0;color:#333}
+header{background:#e94b24;color:white;text-align:center;padding:25px}
+main{max-width:900px;margin:25px auto;padding:15px}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.card{background:white;padding:18px;border-radius:10px;box-shadow:0 2px 8px #ddd}
+button{background:#e94b24;color:white;border:0;padding:10px;border-radius:5px;cursor:pointer;margin:4px}
+input{padding:10px;margin:5px;max-width:90%}
+h2{color:#e94b24}
+</style>
+</head>
+<body>
+<header>
+<h1>🍕 Foodie</h1>
+<p>Delicious food delivered to your door!</p>
+</header>
+<main>
+<h2>Our Food Menu</h2>
+<div class="menu" id="menu"></div>
+
+<h2>Your Cart</h2>
+<div id="cart">Your cart is empty.</div>
+<p id="total">Total: ₹0</p>
+<input id="customer" placeholder="Enter your name">
+<button onclick="placeOrder()">Place Order</button>
+
+<h2>Manage Food Items</h2>
+<input id="name" placeholder="Food name">
+<input id="price" type="number" min="1" placeholder="Price">
+<button onclick="addFood()">Add Food</button>
+
+<h2>Customer Orders</h2>
+<div id="orders">No orders yet.</div>
+</main>
+<script>
+let foods=[
+{id:1,name:"Veg Pizza",price:199},
+{id:2,name:"Burger",price:99},
+{id:3,name:"Masala Dosa",price:80},
+{id:4,name:"Veg Biryani",price:150},
+{id:5,name:"Sandwich",price:70},
+{id:6,name:"French Fries",price:90}
+];
+let cart=[],orders=[];
+
+function render(){
+document.getElementById("menu").innerHTML=foods.map(f=>
+`<div class="card"><h3>${f.name}</h3><p>₹${f.price}</p>
+<button onclick="addCart(${f.id})">Add to Cart</button>
+<button onclick="deleteFood(${f.id})">Delete</button></div>`
+).join("");
+renderCart();
+}
+function addCart(id){
+let f=foods.find(x=>x.id===id);
+if(f)cart.push({...f});
+renderCart();
+}
+function renderCart(){
+document.getElementById("cart").innerHTML=cart.length?
+cart.map((f,i)=>`${f.name} - ₹${f.price}
+<button onclick="removeCart(${i})">Remove</button><br>`).join("")
+:"Your cart is empty.";
+document.getElementById("total").textContent=
+"Total: ₹"+cart.reduce((s,f)=>s+f.price,0);
+}
+function removeCart(i){cart.splice(i,1);renderCart();}
+function addFood(){
+let name=document.getElementById("name").value.trim();
+let price=Number(document.getElementById("price").value);
+if(!name||price<=0){alert("Enter a valid name and price.");return;}
+foods.push({id:Date.now(),name,price});
+document.getElementById("name").value="";
+document.getElementById("price").value="";
+render();
+}
+function deleteFood(id){
+foods=foods.filter(f=>f.id!==id);
+render();
+}
+function placeOrder(){
+let name=document.getElementById("customer").value.trim();
+if(!name||!cart.length){
+alert("Enter your name and add food to your cart.");return;
+}
+let total=cart.reduce((s,f)=>s+f.price,0);
+orders.push({name,items:cart.map(f=>f.name).join(", "),total});
+cart=[];
+renderCart();
+document.getElementById("customer").value="";
+document.getElementById("orders").innerHTML=orders.map((o,i)=>
+`<div class="card"><h3>Order ${i+1}</h3>
+<p>Customer: ${o.name}</p><p>Items: ${o.items}</p>
+<p>Total: ₹${o.total}</p><p>Status: Placed</p></div>`
+).join("");
+alert("Order placed successfully!");
+}
+render();
+</script>
+</body>
+</html>
