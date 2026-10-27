@@ -4,305 +4,462 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Foodie - Online Food Ordering</title>
+<title>Foodie | Fresh & Delicious</title>
 <style>
+:root{
+  --orange:#ff6b35;
+  --dark:#202020;
+  --cream:#fff8f2;
+  --muted:#777;
+  --white:#fff;
+}
 *{box-sizing:border-box}
-body{font-family:Arial,sans-serif;margin:0;background:#fff8f0;color:#222}
-header{background:#ed4825;color:white;text-align:center;padding:22px}
-header h1{margin:0 0 8px}
-nav{background:#292929;padding:12px;text-align:center}
-nav a{color:white;text-decoration:none;margin:0 15px}
-main{max-width:1050px;margin:25px auto;padding:15px}
-h2{color:#ed4825}
-.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
-.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 9px #ddd}
-.card h3{margin-top:5px}
-.price{font-weight:bold}
-button{background:#ed4825;color:white;border:0;padding:10px 12px;border-radius:5px;cursor:pointer;margin:4px 2px}
-button:hover{background:#c93719}
-input{padding:11px;margin:5px 5px 5px 0;border:1px solid #aaa;border-radius:4px;max-width:100%}
-section{margin-bottom:28px}
-.status{background:#e6f5e9;padding:12px;border-radius:6px}
-footer{text-align:center;background:#292929;color:white;padding:16px}
-@media(max-width:600px){main{padding:12px}.menu{grid-template-columns:1fr}nav a{margin:0 7px}}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:Arial,sans-serif;
+  background:var(--cream);color:var(--dark);
+}
+header{
+  background:var(--dark);color:white;padding:20px 7%;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:15px;
+}
+.logo{font-size:27px;font-weight:bold}
+.logo span{color:var(--orange)}
+header nav{display:flex;gap:22px;flex-wrap:wrap}
+header nav a{color:white;text-decoration:none;font-size:14px}
+header nav a:hover{color:var(--orange)}
+.hero{
+  margin:25px auto 35px;width:86%;min-height:220px;
+  border-radius:20px;padding:35px;
+  background:linear-gradient(120deg,#28211e,#59402f);
+  color:white;display:flex;align-items:center;justify-content:space-between;
+  gap:20px;overflow:hidden;
+}
+.hero h1{font-size:clamp(30px,4vw,48px);margin:0 0 12px}
+.hero h1 span{color:var(--orange)}
+.hero p{color:#eee;line-height:1.6}
+.hero .food-art{font-size:100px}
+.container{width:86%;margin:auto}
+.section-title{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;margin:30px 0 18px;
+}
+h2{font-size:25px;margin:0}
+.search{
+  padding:12px 15px;border:1px solid #ddd;border-radius:10px;
+  width:min(100%,270px);font-size:14px;
+}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.filters button{
+  background:white;color:#444;border:1px solid #eee;
+  border-radius:25px;padding:10px 17px;
+}
+.filters button.active,.filters button:hover{
+  background:var(--orange);color:white;border-color:var(--orange);
+}
+.menu{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;
+}
+.card{
+  background:white;border:1px solid #f0e9e3;border-radius:15px;
+  overflow:hidden;box-shadow:0 5px 18px #3524180b;
+  transition:transform .2s,box-shadow .2s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 9px 24px #35241815}
+.food-picture{
+  height:125px;display:flex;align-items:center;justify-content:center;
+  font-size:65px;background:linear-gradient(135deg,#ffeadb,#fff5ec);
+}
+.card-content{padding:16px}
+.card h3{margin:0 0 8px;font-size:17px}
+.desc{font-size:12px;color:var(--muted);min-height:28px;line-height:1.4}
+.card-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.price{font-size:18px;font-weight:bold;color:#d94820}
+button{
+  cursor:pointer;border:0;font-size:13px;font-weight:600;
+  padding:10px 12px;border-radius:8px;
+}
+.primary{background:var(--orange);color:white}
+.primary:hover{background:#e75323}
+.secondary{background:#fff0e8;color:#d94820}
+.danger{background:#fff0ef;color:#c0392b}
+.small-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:13px}
+.small-actions button{flex:1;padding:8px 5px;font-size:11px}
+.panel{
+  background:white;border:1px solid #eee4db;border-radius:15px;
+  padding:22px;margin:25px 0;
+}
+.cart-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:13px 0;border-bottom:1px solid #eee;
+}
+.cart-row:last-child{border-bottom:0}
+.cart-row p{margin:5px 0;color:var(--muted);font-size:13px}
+.cart-total{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:20px;font-weight:bold;padding-top:18px;
+}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.form-row input,.form-row select{
+  padding:12px;border:1px solid #ddd;border-radius:8px;
+  font-size:14px;min-width:0;flex:1;
+}
+.message{font-size:14px;color:#25834a}
+.order-card{border:1px solid #eee;padding:15px;border-radius:10px;margin-top:12px}
+.badge{background:#e5f7eb;color:#237443;padding:5px 9px;border-radius:20px;font-size:12px}
+footer{
+  background:var(--dark);color:#ddd;text-align:center;
+  padding:28px 15px;margin-top:45px;font-size:13px;
+}
+.empty{padding:28px;text-align:center;color:var(--muted);background:white;border-radius:12px}
+@media(max-width:900px){
+  .menu{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero,.container{width:92%}
+}
+@media(max-width:520px){
+  header{padding:18px 5%}
+  header nav{gap:12px}
+  .hero{padding:24px;min-height:180px}
+  .hero .food-art{font-size:55px}
+  .menu{grid-template-columns:1fr}
+  .container{width:92%}
+  .section-title{align-items:flex-start}
+  .search{width:100%}
+}
 </style>
 </head>
 <body>
+
 <header>
-<h1>🍕 Foodie</h1>
-<p>Delicious food delivered to your door!</p>
+  <div class="logo">🍴 Food<span>ie.</span></div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#menuSection">Menu</a>
+    <a href="#cartSection">My Cart 🛒</a>
+    <a href="#manageSection">Manage Food</a>
+    <a href="#ordersSection">Orders</a>
+  </nav>
 </header>
 
-<nav>
-<a href="#menuSection">Food Menu</a>
-<a href="#cartSection">Your Cart</a>
-<a href="#manageSection">Manage Food</a>
-<a href="#ordersSection">Orders</a>
-</nav>
-
-<main>
-<section id="menuSection">
-<h2>Our Food Menu</h2>
-<div id="menu" class="menu"></div>
+<section class="hero" id="home">
+  <div>
+    <p>FRESH FOOD · HAPPY MOOD</p>
+    <h1>Good food, <span>good mood.</span></h1>
+    <p>Discover your favourites, order with ease, and enjoy every bite.</p>
+    <button class="primary" onclick="document.getElementById('menuSection').scrollIntoView()">Explore Menu ↓</button>
+  </div>
+  <div class="food-art">🍕</div>
 </section>
 
-<section id="cartSection">
-<h2>Your Cart</h2>
-<div id="cart">Your cart is empty.</div>
-<p id="total">Total: ₹0</p>
-<input id="customer" placeholder="Enter your name">
-<button onclick="placeOrder()">Place Order</button>
-</section>
+<main class="container">
+  <section id="menuSection">
+    <div class="section-title">
+      <h2>Explore Our Menu</h2>
+      <input class="search" id="search" placeholder="🔍 Search dishes..." oninput="renderMenu()">
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="menu" id="menu"></div>
+  </section>
 
-<section id="manageSection">
-<h2>Manage Food Items</h2>
-<p>Add a new food item or update an existing item from the menu.</p>
-<input id="foodName" placeholder="Food name">
-<input id="foodPrice" type="number" min="1" placeholder="Price (₹)">
-<button onclick="addFood()">Add Food</button>
-<button onclick="cancelEdit()" id="cancelButton" hidden>Cancel Update</button>
-<p id="message" role="status"></p>
-</section>
+  <section id="cartSection" class="panel">
+    <h2>🛒 Your Shopping Cart</h2>
+    <div id="cart"></div>
+    <div class="cart-total">
+      <span>Total</span><span id="total">₹0</span>
+    </div>
+    <div class="form-row">
+      <input id="customer" placeholder="Enter your name">
+      <button class="primary" onclick="placeOrder()">Place Order →</button>
+    </div>
+  </section>
 
-<section id="ordersSection">
-<h2>Customer Orders</h2>
-<div id="orders">No orders yet.</div>
-</section>
+  <section id="manageSection" class="panel">
+    <h2>⚙️ Manage Food Items</h2>
+    <p style="color:#777;font-size:14px">
+      Add new dishes or edit existing names and prices.
+    </p>
+    <div class="form-row">
+      <input id="foodName" placeholder="Food name">
+      <input id="foodPrice" type="number" min="1" placeholder="Price (₹)">
+      <button id="saveFood" class="primary" onclick="saveFood()">＋ Add Food</button>
+      <button id="cancelEdit" class="secondary" onclick="cancelEdit()" hidden>Cancel</button>
+    </div>
+    <p id="message" class="message" role="status"></p>
+  </section>
+
+  <section id="ordersSection" class="panel">
+    <h2>📦 Customer Orders</h2>
+    <div id="orders"></div>
+  </section>
 </main>
 
-<footer>© 2026 Foodie | Online Food Ordering System</footer>
+<footer>
+  <div class="logo">🍴 Food<span>ie.</span></div>
+  <p>Fresh flavours. Simple ordering. Happy customers.</p>
+  <p>© 2026 Foodie Online Ordering System</p>
+</footer>
 
 <script>
 "use strict";
 
-let nextId = 7;
-let editingId = null;
+const categories = ["All","Pizza","Burgers","Indian","Rice","Snacks","Pasta","Desserts"];
+const descriptions = {
+  "Veg Pizza":"Cheesy, fresh and delicious",
+  "Burger":"A classic, satisfying bite",
+  "Masala Dosa":"Crispy dosa with spiced filling",
+  "Veg Biryani":"Aromatic rice with spices",
+  "Sandwich":"Fresh and tasty",
+  "French Fries":"Golden and crispy",
+  "Paneer Tikka":"Smoky, spiced paneer",
+  "Chicken Biryani":"Rich and aromatic",
+  "Cheese Burger":"Juicy burger with cheese",
+  "Pasta":"Creamy Italian favourite",
+  "Idli Sambar":"Soft idlis with sambar",
+  "Chole Bhature":"Spicy chickpeas with bhature",
+  "Veg Fried Rice":"Wok-tossed vegetable rice",
+  "Chicken Noodles":"Noodles with savoury seasoning",
+  "Paneer Roll":"Spiced paneer wrapped in roti",
+  "Chocolate Brownie":"Rich chocolate treat"
+};
 
+const icons = {
+  "Veg Pizza":"🍕","Burger":"🍔","Masala Dosa":"🥞",
+  "Veg Biryani":"🍛","Sandwich":"🥪","French Fries":"🍟",
+  "Paneer Tikka":"🧀","Chicken Biryani":"🍗",
+  "Cheese Burger":"🍔","Pasta":"🍝","Idli Sambar":"🥘",
+  "Chole Bhature":"🫓","Veg Fried Rice":"🍚",
+  "Chicken Noodles":"🍜","Paneer Roll":"🌯",
+  "Chocolate Brownie":"🍫"
+};
+
+function categoryFor(name) {
+  const n = name.toLowerCase();
+  if(n.includes("pizza")) return "Pizza";
+  if(n.includes("burger")) return "Burgers";
+  if(/dosa|idli|paneer|chole/.test(n)) return "Indian";
+  if(/biryani|rice/.test(n)) return "Rice";
+  if(/pasta|noodles/.test(n)) return "Pasta";
+  if(/brownie|cake|ice cream|dessert/.test(n)) return "Desserts";
+  return "Snacks";
+}
+
+let nextId = 17;
+let editingId = null;
+let activeCategory = "All";
 let foods = [
   {id:1,name:"Veg Pizza",price:199},
   {id:2,name:"Burger",price:99},
   {id:3,name:"Masala Dosa",price:80},
   {id:4,name:"Veg Biryani",price:150},
   {id:5,name:"Sandwich",price:70},
-  {id:6,name:"French Fries",price:90}
+  {id:6,name:"French Fries",price:90},
+  {id:7,name:"Paneer Tikka",price:180},
+  {id:8,name:"Chicken Biryani",price:220},
+  {id:9,name:"Cheese Burger",price:129},
+  {id:10,name:"Pasta",price:140},
+  {id:11,name:"Idli Sambar",price:50},
+  {id:12,name:"Chole Bhature",price:120},
+  {id:13,name:"Veg Fried Rice",price:130},
+  {id:14,name:"Chicken Noodles",price:160},
+  {id:15,name:"Paneer Roll",price:110},
+  {id:16,name:"Chocolate Brownie",price:90}
 ];
-
 let cart = [];
 let orders = [];
 
-function render() {
+function safe(value) {
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function renderFilters() {
+  document.getElementById("filters").innerHTML = categories.map(c=>
+    `<button class="${activeCategory===c?'active':''}"
+      onclick="setCategory('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setCategory(category) {
+  activeCategory = category;
+  renderFilters();
+  renderMenu();
+}
+
+function renderMenu() {
+  const search = document.getElementById("search").value.trim().toLowerCase();
+  const shown = foods.filter(f =>
+    (activeCategory==="All" || categoryFor(f.name)===activeCategory) &&
+    f.name.toLowerCase().includes(search)
+  );
   const menu = document.getElementById("menu");
 
-  if (foods.length === 0) {
-    menu.innerHTML = "<p>No food items available. Add a new item below.</p>";
-  } else {
-    menu.innerHTML = foods.map(f => `
-      <div class="card">
-        <h3>${escapeHTML(f.name)}</h3>
-        <p class="price">₹${f.price}</p>
-        <button onclick="addCart(${f.id})">Add to Cart</button>
-        <button onclick="startEdit(${f.id})">Update</button>
-        <button onclick="deleteFood(${f.id})">Delete</button>
-      </div>
-    `).join("");
-  }
-
-  renderCart();
-  renderOrders();
-}
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[char]);
-}
-
-// CREATE: add a new food item or save an update
-function addFood() {
-  const name = document.getElementById("foodName").value.trim();
-  const priceText = document.getElementById("foodPrice").value.trim();
-  const price = Number(priceText);
-  const message = document.getElementById("message");
-
-  if (!name || !priceText || !Number.isFinite(price) || price <= 0) {
-    message.textContent = "Enter a valid food name and positive price.";
+  if(!shown.length) {
+    menu.innerHTML = '<div class="empty">No dishes found. Try another search.</div>';
     return;
   }
 
-  if (editingId !== null) {
-    // UPDATE an existing item
-    const food = foods.find(f => f.id === editingId);
-    if (!food) {
-      message.textContent = "Food item not found.";
-      cancelEdit();
-      return;
-    }
-
-    food.name = name;
-    food.price = price;
-
-    // Update matching items already in the cart
-    cart.forEach(item => {
-      if (item.id === editingId) {
-        item.name = name;
-        item.price = price;
-      }
-    });
-
-    message.textContent = "Food item updated successfully!";
-    cancelEdit(false);
-  } else {
-    // CREATE a new item
-    foods.push({id:nextId++,name:name,price:price});
-    message.textContent = "Food item added successfully!";
-  }
-
-  document.getElementById("foodName").value = "";
-  document.getElementById("foodPrice").value = "";
-  render();
-}
-
-// READ: display all food items in render()
-function startEdit(id) {
-  const food = foods.find(f => f.id === id);
-  if (!food) return;
-
-  editingId = id;
-  document.getElementById("foodName").value = food.name;
-  document.getElementById("foodPrice").value = food.price;
-
-  const button = document.querySelector("#manageSection button");
-  button.textContent = "Save Update";
-  document.getElementById("cancelButton").hidden = false;
-  document.getElementById("message").textContent =
-    "Editing " + food.name + ". Change the details and click Save Update.";
-
-  document.getElementById("manageSection").scrollIntoView({behavior:"smooth"});
-  document.getElementById("foodName").focus();
-}
-
-function cancelEdit(clearMessage = true) {
-  editingId = null;
-  document.getElementById("foodName").value = "";
-  document.getElementById("foodPrice").value = "";
-  document.querySelector("#manageSection button").textContent = "Add Food";
-  document.getElementById("cancelButton").hidden = true;
-
-  if (clearMessage) {
-    document.getElementById("message").textContent = "";
-  }
-}
-
-// DELETE: remove a food item
-function deleteFood(id) {
-  const food = foods.find(f => f.id === id);
-  if (!food) return;
-
-  if (!confirm("Delete " + food.name + " from the menu?")) return;
-
-  foods = foods.filter(f => f.id !== id);
-  cart = cart.filter(item => item.id !== id);
-
-  if (editingId === id) cancelEdit();
-
-  document.getElementById("message").textContent =
-    "Food item deleted successfully!";
-  render();
-}
-
-// SHOPPING CART
-function addCart(id) {
-  const food = foods.find(f => f.id === id);
-  if (!food) return;
-
-  cart.push({...food});
-  renderCart();
-}
-
-function removeCart(index) {
-  cart.splice(index, 1);
-  renderCart();
+  menu.innerHTML = shown.map(f=>`
+    <article class="card">
+      <div class="food-picture">${icons[f.name] || "🍽️"}</div>
+      <div class="card-content">
+        <h3>${safe(f.name)}</h3>
+        <div class="desc">${safe(descriptions[f.name] || "Made fresh for you")}</div>
+        <div class="card-bottom">
+          <span class="price">₹${f.price}</span>
+          <button class="primary" onclick="addCart(${f.id})">Add +</button>
+        </div>
+        <div class="small-actions">
+          <button class="secondary" onclick="startEdit(${f.id})">✏️ Update</button>
+          <button class="danger" onclick="deleteFood(${f.id})">🗑 Delete</button>
+        </div>
+      </div>
+    </article>
+  `).join("");
 }
 
 function renderCart() {
-  const cartElement = document.getElementById("cart");
-
-  if (cart.length === 0) {
-    cartElement.textContent = "Your cart is empty.";
+  const element = document.getElementById("cart");
+  if(!cart.length) {
+    element.innerHTML = '<div class="empty">Your cart is empty. Add something delicious!</div>';
   } else {
-    cartElement.innerHTML = cart.map((item, index) => `
-      <div>
-        ${escapeHTML(item.name)} - ₹${item.price}
-        <button onclick="removeCart(${index})">Remove</button>
+    element.innerHTML = cart.map((f,i)=>`
+      <div class="cart-row">
+        <div><strong>${safe(f.name)}</strong><p>₹${f.price}</p></div>
+        <button class="danger" onclick="removeCart(${i})">Remove</button>
       </div>
     `).join("");
   }
-
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
-  document.getElementById("total").textContent = "Total: ₹" + total;
-}
-
-// PLACE CUSTOMER ORDER
-function placeOrder() {
-  const customer = document.getElementById("customer").value.trim();
-
-  if (!customer) {
-    alert("Please enter your name.");
-    return;
-  }
-
-  if (cart.length === 0) {
-    alert("Please add food items to your cart.");
-    return;
-  }
-
-  const order = {
-    id: orders.length + 1,
-    customer: customer,
-    items: cart.map(item => ({...item})),
-    total: cart.reduce((sum, item) => sum + item.price, 0),
-    status: "Placed"
-  };
-
-  orders.push(order);
-  cart = [];
-  document.getElementById("customer").value = "";
-
-  render();
-  alert("Order placed successfully!");
+  document.getElementById("total").textContent =
+    "₹"+cart.reduce((sum,f)=>sum+f.price,0);
 }
 
 function renderOrders() {
   const element = document.getElementById("orders");
-
-  if (orders.length === 0) {
-    element.textContent = "No orders yet.";
+  if(!orders.length) {
+    element.innerHTML = '<p style="color:#777">No orders yet.</p>';
     return;
   }
-
-  element.innerHTML = orders.map(order => `
-    <div class="card" style="margin-bottom:12px">
-      <h3>Order #${order.id}</h3>
-      <p>Customer: ${escapeHTML(order.customer)}</p>
-      <p>Items: ${order.items.map(item => escapeHTML(item.name)).join(", ")}</p>
-      <p>Total: ₹${order.total}</p>
-      <p>Status: <strong>${escapeHTML(order.status)}</strong></p>
-      <button onclick="updateOrderStatus(${order.id})">Update Order Status</button>
+  element.innerHTML = orders.map(o=>`
+    <div class="order-card">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <strong>Order #${o.id}</strong><span class="badge">${safe(o.status)}</span>
+      </div>
+      <p>Customer: ${safe(o.customer)}</p>
+      <p>Items: ${o.items.map(f=>safe(f.name)).join(", ")}</p>
+      <strong>Total: ₹${o.total}</strong><br>
+      <button class="secondary" onclick="updateOrder(${o.id})">Update Status</button>
     </div>
   `).join("");
 }
 
-function updateOrderStatus(id) {
-  const order = orders.find(o => o.id === id);
-  if (!order) return;
+function render() {
+  renderFilters();
+  renderMenu();
+  renderCart();
+  renderOrders();
+}
 
-  const statuses = ["Placed", "Preparing", "Delivered"];
-  const current = statuses.indexOf(order.status);
-  order.status = statuses[(current + 1) % statuses.length];
+// CREATE and UPDATE
+function saveFood() {
+  const name = document.getElementById("foodName").value.trim();
+  const rawPrice = document.getElementById("foodPrice").value;
+  const price = Number(rawPrice);
+  const message = document.getElementById("message");
+
+  if(!name || rawPrice==="" || !Number.isFinite(price) || price<=0) {
+    message.textContent = "Enter a food name and a price greater than zero.";
+    return;
+  }
+
+  if(editingId!==null) {
+    const food = foods.find(f=>f.id===editingId);
+    if(!food) { cancelEdit(); return; }
+    food.name = name;
+    food.price = price;
+    cart.forEach(f=>{
+      if(f.id===editingId){f.name=name;f.price=price;}
+    });
+    message.textContent = "Food item updated successfully!";
+    cancelEdit(false);
+  } else {
+    foods.push({id:nextId++,name,price});
+    message.textContent = "New food item added successfully!";
+  }
+
+  document.getElementById("foodName").value="";
+  document.getElementById("foodPrice").value="";
+  render();
+}
+
+function startEdit(id) {
+  const food = foods.find(f=>f.id===id);
+  if(!food) return;
+  editingId = id;
+  document.getElementById("foodName").value = food.name;
+  document.getElementById("foodPrice").value = food.price;
+  document.getElementById("saveFood").textContent = "Save Update";
+  document.getElementById("cancelEdit").hidden = false;
+  document.getElementById("message").textContent = "Edit the details below.";
+  document.getElementById("manageSection").scrollIntoView({behavior:"smooth"});
+}
+
+function cancelEdit(clear=true) {
+  editingId = null;
+  document.getElementById("foodName").value="";
+  document.getElementById("foodPrice").value="";
+  document.getElementById("saveFood").textContent="＋ Add Food";
+  document.getElementById("cancelEdit").hidden=true;
+  if(clear) document.getElementById("message").textContent="";
+}
+
+// DELETE
+function deleteFood(id) {
+  const food = foods.find(f=>f.id===id);
+  if(!food || !confirm("Delete "+food.name+" from the menu?")) return;
+  foods = foods.filter(f=>f.id!==id);
+  cart = cart.filter(f=>f.id!==id);
+  if(editingId===id) cancelEdit();
+  document.getElementById("message").textContent="Food item deleted.";
+  render();
+}
+
+// CART
+function addCart(id) {
+  const food=foods.find(f=>f.id===id);
+  if(food){cart.push({...food});renderCart();}
+}
+function removeCart(index) {
+  cart.splice(index,1);
+  renderCart();
+}
+
+// ORDERS
+function placeOrder() {
+  const customer=document.getElementById("customer").value.trim();
+  if(!customer){alert("Please enter your name.");return;}
+  if(!cart.length){alert("Please add items to your cart.");return;}
+
+  orders.push({
+    id:orders.length+1,
+    customer,
+    items:cart.map(f=>({...f})),
+    total:cart.reduce((sum,f)=>sum+f.price,0),
+    status:"Placed"
+  });
+  cart=[];
+  document.getElementById("customer").value="";
+  render();
+  alert("Order placed successfully!");
+}
+
+function updateOrder(id) {
+  const order=orders.find(o=>o.id===id);
+  if(!order)return;
+  const states=["Placed","Preparing","Delivered"];
+  order.status=states[(states.indexOf(order.status)+1)%states.length];
   renderOrders();
 }
 
